@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Shop2.Shared.Data;
 using System.Linq;
 
@@ -27,6 +28,10 @@ namespace Shop2.Server
             services.AddDbContext<dbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Conn")));
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shop", Version = "v1" });
+            });
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -37,6 +42,9 @@ namespace Shop2.Server
         {
             if (env.IsDevelopment())
             {
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json","Shop v1"));
+
                 app.UseDeveloperExceptionPage();
                 app.UseWebAssemblyDebugging();
             }
